@@ -1,0 +1,19 @@
+.movie-item {
+  // min-height: 35rem;
+  &__poster {
+    height: min-content;
+    aspect-ratio: 3/5 !important;
+    & > * {
+      aspect-ratio: 3/5 !important;
+    }
+    &--sceleton {
+      z-index: 1 !important;
+    }
+    &--image {
+      z-index: 10 !important;
+    }
+    &--space {
+      z-index: 1 !important;
+    }
+  }
+}

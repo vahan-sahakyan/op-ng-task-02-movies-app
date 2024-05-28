@@ -4,15 +4,15 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
   selector: 'app-pagination',
   styleUrls: ['./pagination.component.scss'],
   template: `
-    <div class="flex justify-center mt-4 select-none">
+    <div class="relative flex justify-center mt-4 select-none">
       <button
         (click)="changePage(currentPage - 1)"
         [disabled]="currentPage === 1"
         [class.pointer-events-none]="currentPage === 1"
         class="{{
-          'pagination-button px-3 py-1 mx-1 bg-white text-blue-600 border-zinc-30 hover:border-blue-500 disabled:opacity-50 ' +
-            ' dark:bg-zinc-900  dark:text-zinc-400 ' +
-            ' dark:border-zinc-700 dark:hover:border-blue-500 justify-self-start'
+          'pagination-button px-3 py-1 mx-1 bg-white text-blue-600 hover:border-blue-500 disabled:opacity-50 ' +
+            ' dark:bg-zinc-800  dark:text-zinc-400 ' +
+            ' dark:border-zinc-700 dark:hover:border-blue-500 hover:text-blue-500 justify-self-start absolute left-0 border-none'
         }}"
       >
         Back
@@ -23,16 +23,16 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
         [currentPage]="currentPage"
         (pageChange)="changePage($event)"
         [page]="page"
-        [isPrevOrNextPage]="['SUPER_PREV', 'SUPER_NEXT'].includes(page.toString())"
+        [isSuperButton]="['SUPER_PREV', 'SUPER_NEXT'].includes(page.toString())"
       />
       <button
         (click)="changePage(currentPage + 1)"
         [disabled]="currentPage === totalPages"
         [class.pointer-events-none]="currentPage === totalPages"
         class="{{
-          'pagination-button px-3 py-1 mx-1 bg-white text-blue-600 border-zinc-30 hover:border-blue-500 disabled:opacity-50' +
-            ' dark:bg-zinc-900  dark:text-zinc-400 ' +
-            ' dark:border-zinc-700 dark:hover:border-blue-500 justify-self-end'
+          'pagination-button px-3 py-1 mx-1 bg-white text-blue-600 hover:border-blue-500 disabled:opacity-50' +
+            ' dark:bg-zinc-800  dark:text-zinc-400 ' +
+            ' dark:border-zinc-700 dark:hover:border-blue-500 hover:text-blue-500 justify-self-end absolute right-0 border-none'
         }}"
       >
         Next

@@ -2,7 +2,15 @@ import { Injectable } from '@angular/core';
 
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { BehaviorSubject } from 'rxjs';
-import { IGenre, IGenresResponse, IMoviesResponse, NULL_GENRES_RESP, NULL_MVS_RESP } from '../models/movie/movie.model';
+import {
+  IDetailedMovie,
+  IGenre,
+  IGenresResponse,
+  IMoviesResponse,
+  NULL_DET_MOVIE,
+  NULL_GENRES_RESP,
+  NULL_MVS_RESP,
+} from '../models/movie/movie.model';
 
 const REACT_APP_MOVIES_API_KEY = 'f82ecbb7a5110caecaee2bee5e4c79d6';
 
@@ -20,6 +28,9 @@ export class MovieService {
   private genresSubject = new BehaviorSubject<IGenresResponse>(NULL_GENRES_RESP);
   public genres$ = this.genresSubject.asObservable();
 
+  private detailedMovieSubject = new BehaviorSubject<IDetailedMovie>(NULL_DET_MOVIE);
+  public detailedMovie$ = this.detailedMovieSubject.asObservable();
+
   private commonParams = { api_key: this.apiKey };
 
   constructor(private http: HttpClient) {}
@@ -29,6 +40,18 @@ export class MovieService {
     this.http
       .get<IMoviesResponse>(`${this.baseUrl}/movie/popular`, { params })
       .subscribe((data) => this.moviesSubject.next(data));
+  }
+  searchMovies(_params: Record<any, any>): void {
+    const params = { ...this.commonParams, ..._params };
+    this.http
+      .get<IMoviesResponse>(`${this.baseUrl}/search/movie`, { params })
+      .subscribe((data) => this.moviesSubject.next(data));
+  }
+  fetchMovieById(id: string): void {
+    const params = { ...this.commonParams };
+    this.http
+      .get<IDetailedMovie>(`${this.baseUrl}/movie/${id}`, { params })
+      .subscribe((data) => this.detailedMovieSubject.next(data));
   }
 
   // fetch genres
