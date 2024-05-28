@@ -1,0 +1,99 @@
+import { Component, EventEmitter, Input, Output } from '@angular/core';
+
+@Component({
+  selector: 'app-pagination',
+  styleUrls: ['./pagination.component.scss'],
+  template: `
+    <div class="flex justify-center mt-4 select-none">
+      <button
+        (click)="changePage(currentPage - 1)"
+        [disabled]="currentPage === 1"
+        [class.pointer-events-none]="currentPage === 1"
+        class="{{
+          'pagination-button px-3 py-1 mx-1 bg-white text-blue-600 border-zinc-30 hover:border-blue-500 disabled:opacity-50 ' +
+            ' dark:bg-zinc-900  dark:text-zinc-400 ' +
+            ' dark:border-zinc-700 dark:hover:border-blue-500 justify-self-start'
+        }}"
+      >
+        Back
+      </button>
+      <app-pagination-button
+        *ngFor="let page of visiblePages"
+        [visiblePages]="visiblePages"
+        [currentPage]="currentPage"
+        (pageChange)="changePage($event)"
+        [page]="page"
+        [isPrevOrNextPage]="['SUPER_PREV', 'SUPER_NEXT'].includes(page.toString())"
+      />
+      <button
+        (click)="changePage(currentPage + 1)"
+        [disabled]="currentPage === totalPages"
+        [class.pointer-events-none]="currentPage === totalPages"
+        class="{{
+          'pagination-button px-3 py-1 mx-1 bg-white text-blue-600 border-zinc-30 hover:border-blue-500 disabled:opacity-50' +
+            ' dark:bg-zinc-900  dark:text-zinc-400 ' +
+            ' dark:border-zinc-700 dark:hover:border-blue-500 justify-self-end'
+        }}"
+      >
+        Next
+      </button>
+    </div>
+  `,
+})
+export class PaginationComponent {
+  @Input() currentPage: number = 0;
+  @Input() totalPages: number = 0;
+  @Output() pageChange = new EventEmitter<number>();
+
+  get visiblePages(): Array<string | number> {
+    return getVisiblePages(this);
+  }
+
+  changePage(page: any): void {
+    console.log(this.currentPage, page);
+    if (page === 'SUPER_PREV') {
+      const newPage = Math.max(this.currentPage - 5, 1);
+      this.pageChange.emit(newPage);
+    } else if (page === 'SUPER_NEXT') {
+      const newPage = Math.min(this.currentPage + 5, this.totalPages);
+      this.pageChange.emit(newPage);
+    } else if (page >= 1 && page <= this.totalPages) {
+      this.pageChange.emit(page);
+    }
+  }
+}
+
+function getVisiblePages(self: PaginationComponent) {
+  const totalVisiblePages = 5;
+  const pages: Array<number | string> = [];
+
+  if (self.totalPages <= totalVisiblePages) {
+    addPageRange(1, self.totalPages, pages);
+    return pages;
+  }
+
+  let startPage = Math.max(self.currentPage - 2, 1);
+  let endPage = Math.min(startPage + totalVisiblePages - 1, self.totalPages);
+
+  if (endPage - startPage < totalVisiblePages - 1) startPage = Math.max(endPage - totalVisiblePages + 1, 1);
+
+  addPageRange(startPage, endPage, pages);
+
+  if (startPage > 1) {
+    pages.unshift(1);
+    if (startPage > 2) pages.splice(1, 0, 'SUPER_PREV');
+  }
+
+  if (endPage < self.totalPages) {
+    pages.push(self.totalPages);
+    if (endPage < self.totalPages - 1) pages.splice(pages.length - 1, 0, 'SUPER_NEXT');
+  }
+
+  return pages;
+}
+
+function addPageRange(start: number, end: number, pages: Array<number | string> = []) {
+  for (let i = start; i <= end; i++) {
+    pages.push(i);
+  }
+}
