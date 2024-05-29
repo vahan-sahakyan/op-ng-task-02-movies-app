@@ -10,9 +10,10 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
         [disabled]="currentPage === 1"
         [class.pointer-events-none]="currentPage === 1"
         class="{{
-          'pagination-button px-3 py-1 mx-1 bg-white text-blue-600 hover:border-blue-500 disabled:opacity-50 ' +
-            ' dark:bg-zinc-800  dark:text-zinc-400 ' +
-            ' dark:border-zinc-700 dark:hover:border-blue-500 hover:text-blue-500 justify-self-start absolute left-0 border-none'
+          'pagination-button hidden lg:block xl:block ' +
+            ' rounded-full text-zinc-500 mx-1 hover:text-zinc-900 ' +
+            'dark:text-zinc-400 dark:border-zinc-700 dark:hover:text-zinc-100  ' +
+            'justify-self-start absolute left-0 border-none disabled:cursor-not-allowed'
         }}"
       >
         Back
@@ -30,9 +31,10 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
         [disabled]="currentPage === totalPages"
         [class.pointer-events-none]="currentPage === totalPages"
         class="{{
-          'pagination-button px-3 py-1 mx-1 bg-white text-blue-600 hover:border-blue-500 disabled:opacity-50' +
-            ' dark:bg-zinc-800  dark:text-zinc-400 ' +
-            ' dark:border-zinc-700 dark:hover:border-blue-500 hover:text-blue-500 justify-self-end absolute right-0 border-none'
+          'pagination-button hidden lg:block xl:block ' +
+            ' rounded-full text-zinc-500 mx-1 hover:text-zinc-900 ' +
+            'dark:text-zinc-400 dark:border-zinc-700 dark:hover:text-zinc-100  ' +
+            'justify-self-end absolute right-0 border-none'
         }}"
       >
         Next

@@ -10,6 +10,10 @@ import { PaginationComponent } from './components/pagination/pagination.componen
 import { MovieItemComponent } from './components/movie-item/movie-item.component';
 import { MovieDetailsComponent } from './components/movie-details/movie-details.component';
 import { MovieListComponent } from './components/movie-list/movie-list.component';
+import { NoResultsComponent } from './components/no-results/no-results.component';
+import { ScrollUpComponent } from './components/scroll-up/scroll-up.component';
+import { SpinnerComponent } from './components/spinner/spinner.component';
+import { SearchSectionComponent } from './components/search-section/search-section.component';
 
 @NgModule({
   declarations: [
@@ -19,6 +23,10 @@ import { MovieListComponent } from './components/movie-list/movie-list.component
     MovieItemComponent,
     MovieDetailsComponent,
     MovieListComponent,
+    NoResultsComponent,
+    ScrollUpComponent,
+    SpinnerComponent,
+    SearchSectionComponent,
   ],
   imports: [FormsModule, BrowserModule, AppRoutingModule, HttpClientModule],
   providers: [],

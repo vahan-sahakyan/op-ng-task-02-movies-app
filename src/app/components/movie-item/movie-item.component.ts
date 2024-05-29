@@ -19,7 +19,7 @@ import { IGenreMap, IMovie } from 'src/app/models/movie/movie.model';
         </header>
       </a>
 
-      <footer>
+      <footer class="h-0">
         <p class="text-sm mb-0 dark:text-zinc-400 text-zinc-500">
           {{ genres[movie.genre_ids[0]] | uppercase }}
         </p>
@@ -31,7 +31,7 @@ import { IGenreMap, IMovie } from 'src/app/models/movie/movie.model';
 
         <div class="mb-4 dark:text-zinc-400 text-zinc-500 flex flex-row ">
           {{ movie.release_date | date : 'yyyy' }}
-          - Rating: {{ movie.vote_average }}
+          · Rating: {{ movie.vote_average | number : '1.0-2' }}
         </div>
       </footer>
     </figure>

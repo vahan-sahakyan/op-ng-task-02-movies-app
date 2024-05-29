@@ -1,18 +1,22 @@
 $primary: #3b82f6;
 .pagination-button {
-  width: 4.5rem !important;
-  max-width: 4.5rem !important;
-  min-width: 4.5rem !important;
-
-  height: 3rem;
+  width: 4rem;
+  height: 4rem;
   text-align: center;
-  border-radius: 0.25rem;
-  border-width: 1px;
-  &.active {
-    border-width: 1px;
+  color: #a1a1aa;
+  background-color: none;
+  @media (prefers-color-scheme: light) {
+    color: #71717a;
+    background-color: none;
+  }
 
+  &.active {
     font-weight: bold;
-    color: $primary;
-    border-color: $primary !important;
+    color: #a1a1aa !important;
+    background-color: #3f3f46 !important;
+    @media (prefers-color-scheme: light) {
+      color: #71717a !important;
+      background-color: #f4f4f5 !important;
+    }
   }
 }

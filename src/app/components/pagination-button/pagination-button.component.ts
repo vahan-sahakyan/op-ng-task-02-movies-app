@@ -8,11 +8,12 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
       (click)="onChangePage(page)"
       [class.active]="page === currentPage"
       [class.font-bold]="page === currentPage"
-      [style.border]="isSuperButton ? 'none' : ''"
       class="{{
-        'pagination-button px-3 py-1 mx-1 bg-white text-blue-600 hover:text-blue-600 hover:border-blue-500' +
-          ' dark:bg-zinc-800  dark:text-zinc-400 ' +
-          ' dark:border-zinc-700 dark:hover:border-blue-500 dark:hover:text-blue-500  '
+        'pagination-button rounded-full text-zinc-900 mx-1  hover:text-zinc-500 sm:-scale-50' +
+          'dark:text-zinc-400 dark:border-zinc-700 dark:hover:text-zinc-100  ' +
+          (![+page - 2, +page - 1, page, +page + 1, +page + 2].includes(currentPage)
+            ? 'hidden sm:hidden md:block lg:block xl:block'
+            : '')
       }}"
     >
       {{ isSuperButton ? '. . . ' : page }}

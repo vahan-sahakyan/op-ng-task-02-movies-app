@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { combineLatest } from 'rxjs';
 import { IDetailedMovie, NULL_DET_MOVIE } from 'src/app/models/movie/movie.model';
@@ -9,20 +9,13 @@ import { MovieService } from 'src/app/services/movie.service';
   styleUrls: ['./movie-details.component.scss'],
   template: `
     <div class="grid">
-      <div class="container mx-10 w-auto  xl:w-2/3  place-self-center p-4 relative">
-        <button class="absolute top-8 -left-14 p-3  text-blue-500" (click)="goBack()">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke-width="2"
-            stroke="currentColor"
-            class="w-6 h-6"
-          >
-            <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
-          </svg>
+      <div
+        *ngIf="detailedMovie && !isLoadingDetailedMovie"
+        class="container mx-10 w-auto  xl:w-2/3  place-self-center p-4 relative"
+      >
+        <button class="absolute top-12 -left-14 p-3 text-zinc-500 hover:text-zinc-600" (click)="goBack()">
+          <i class="fas fa-2xl fa-angle-left"></i>
         </button>
-
         <section
           class="flex gap-4 flex-col sm:flex-col md:flex-col lg:flex-row xl:flex-row  dark:bg-zinc-800 rounded-lg  justify-items-start"
         >
@@ -67,9 +60,10 @@ import { MovieService } from 'src/app/services/movie.service';
     </div>
   `,
 })
-export class MovieDetailsComponent {
+export class MovieDetailsComponent implements OnInit, OnDestroy {
   movieId = '';
-  detailedMovie: IDetailedMovie = NULL_DET_MOVIE;
+  detailedMovie: IDetailedMovie | undefined;
+  isLoadingDetailedMovie: boolean = false;
   constructor(
     //
     private movieService: MovieService,
@@ -82,11 +76,19 @@ export class MovieDetailsComponent {
       this.movieId = params['id'];
     });
     this.movieService.fetchMovieById(this.movieId);
-    combineLatest([this.movieService.detailedMovie$]).subscribe(([detailedMovieRes]) => {
+    combineLatest([
+      //
+      this.movieService.detailedMovie$,
+      this.movieService.isLoadingDetailedMovie$,
+    ]).subscribe(([detailedMovieRes, isLoadingDetailedMovie]) => {
       this.detailedMovie = detailedMovieRes;
+      this.isLoadingDetailedMovie = isLoadingDetailedMovie;
     });
   }
   goBack() {
     this.router.navigate(['/']);
+  }
+  ngOnDestroy(): void {
+    this.movieService.setDetailedMovie(undefined);
   }
 }
