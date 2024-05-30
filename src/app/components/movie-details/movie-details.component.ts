@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { combineLatest } from 'rxjs';
-import { IDetailedMovie, NULL_DET_MOVIE } from 'src/app/models/movie/movie.model';
+import { Subject, combineLatest, takeUntil } from 'rxjs';
+import { IDetailedMovie } from 'src/app/models/movie/movie.model';
 import { MovieService } from 'src/app/services/movie.service';
 
 @Component({
@@ -21,7 +21,7 @@ import { MovieService } from 'src/app/services/movie.service';
         >
           <figure class="col-span-1 md:order-1  dark:bg-zinc-800   flex justify-center items-center">
             <img
-              [src]="'https://image.tmdb.org/t/p/w500/' + detailedMovie.poster_path"
+              [src]="'https://image.tmdb.org/t/p/w500' + detailedMovie.poster_path"
               alt="{{ detailedMovie.title }}"
               class="max-w-xs md:max-w-md rounded-lg shadow-lg shadow-zinc-500 dark:shadow-zinc-900"
             />
@@ -61,6 +61,7 @@ import { MovieService } from 'src/app/services/movie.service';
   `,
 })
 export class MovieDetailsComponent implements OnInit, OnDestroy {
+  private destroy$ = new Subject<void>();
   movieId = '';
   detailedMovie: IDetailedMovie | undefined;
   isLoadingDetailedMovie: boolean = false;
@@ -80,15 +81,19 @@ export class MovieDetailsComponent implements OnInit, OnDestroy {
       //
       this.movieService.detailedMovie$,
       this.movieService.isLoadingDetailedMovie$,
-    ]).subscribe(([detailedMovieRes, isLoadingDetailedMovie]) => {
-      this.detailedMovie = detailedMovieRes;
-      this.isLoadingDetailedMovie = isLoadingDetailedMovie;
-    });
+    ])
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(([detailedMovieRes, isLoadingDetailedMovie]) => {
+        this.detailedMovie = detailedMovieRes;
+        this.isLoadingDetailedMovie = isLoadingDetailedMovie;
+      });
   }
   goBack() {
     this.router.navigate(['/']);
   }
   ngOnDestroy(): void {
     this.movieService.setDetailedMovie(undefined);
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }

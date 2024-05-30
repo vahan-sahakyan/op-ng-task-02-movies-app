@@ -1,5 +1,5 @@
-import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { combineLatest } from 'rxjs';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Subject, combineLatest, takeUntil } from 'rxjs';
 import { IGenreMap, IMovie } from 'src/app/models/movie/movie.model';
 import { MovieService } from 'src/app/services/movie.service';
 
@@ -9,23 +9,26 @@ import { MovieService } from 'src/app/services/movie.service';
   template: `
     <div class="container mx-auto p-4">
       <app-search-section
-        (search)="handleSearch($event)"
+        (search)="handleSearch()"
+        (resetSearch)="handleSearchReset()"
         (searchKeyPress)="handleSearchKeyPress($event)"
-        [setPreviousSearchQuery]="setPreviousSearchQuery.bind(this)"
-        [setSearchQuery]="setSearchQuery.bind(this)"
+        [setPreviousSearchQuery]="setPreviousSearchQuery"
       />
+
       <div *ngIf="totalPages > 1" class="pagination-wrapper">
         <br />
         <br />
         <hr class="dark:border-zinc-700" />
         <app-pagination
           *ngIf="totalPages > 1"
-          [currentPage]="currentPage"
           [totalPages]="totalPages"
+          [currentPage]="currentPage"
           (pageChange)="onPageChange($event)"
         ></app-pagination>
       </div>
+
       <app-no-results [text]="prevSearchQuery" *ngIf="!movies.length && !isLoadingMovies" />
+
       <div class="results-container" *ngIf="movies.length">
         <div
           class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 gap-y-44 mt-10 mb-44"
@@ -39,8 +42,8 @@ import { MovieService } from 'src/app/services/movie.service';
           <hr class="dark:border-zinc-700" />
           <app-pagination
             *ngIf="totalPages > 1"
-            [currentPage]="currentPage"
             [totalPages]="totalPages"
+            [currentPage]="currentPage"
             (pageChange)="onPageChange($event)"
           ></app-pagination>
         </div>
@@ -49,71 +52,74 @@ import { MovieService } from 'src/app/services/movie.service';
     </div>
   `,
 })
-export class MovieListComponent implements OnInit, OnDestroy, AfterViewInit {
+export class MovieListComponent implements OnInit, OnDestroy {
+  private destroy$ = new Subject<void>();
   movies: IMovie[] = [];
   genres: IGenreMap = {};
   currentPage: number = 1;
   totalPages: number = 500;
-  searchQuery: string = ''; // FIXME: into service
-  prevSearchQuery: string = ''; // FIXME: into service
+  searchQuery: string = '';
+  prevSearchQuery: string = '';
   isLoadingMovies: boolean = false;
+
   constructor(private movieService: MovieService) {}
-  ngAfterViewInit(): void {}
 
   ngOnInit(): void {
-    this.getMovies();
-    this.getGenres();
+    this.movieService[this.movieService.getSearchQuery() ? 'searchMovies' : 'fetchMovies']();
+    this.movieService.fetchGenres();
 
     combineLatest([
       this.movieService.movies$,
       this.movieService.genres$,
       this.movieService.isLoadingMovies$,
       this.movieService.currentPage$,
-    ]).subscribe(([moviesRes, genresRes, isLoadingMovies, currentPage]) => {
-      this.movies = moviesRes.results;
-      this.totalPages = moviesRes.total_pages < 500 ? moviesRes.total_pages : 500;
-      this.genres = genresRes.genres.reduce((acc, cur) => ({ ...acc, [cur.id]: cur.name }), {});
-      this.isLoadingMovies = isLoadingMovies;
-      this.currentPage = currentPage;
-    });
+      this.movieService.searchQuery$,
+    ])
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(([moviesRes, genresRes, isLoadingMovies, currentPage, searchQuery]) => {
+        this.movies = moviesRes.results;
+        this.totalPages = moviesRes.total_pages < 500 ? moviesRes.total_pages : 500;
+        this.genres = genresRes.genres.reduce((acc, cur) => ({ ...acc, [cur.id]: cur.name }), {});
+        this.isLoadingMovies = isLoadingMovies;
+        this.currentPage = currentPage;
+        this.searchQuery = searchQuery;
+      });
   }
 
-  getMovies(): void {
-    this.movieService.fetchMovies();
-  }
-  getGenres(): void {
-    this.movieService.fetchGenres();
-  }
-
-  setPreviousSearchQuery(searchQuery: string): void {
-    // FIXME: into service
-    this.prevSearchQuery = searchQuery;
-  }
-  setSearchQuery(searchQuery: string): void {
-    // FIXME: into service
-    this.searchQuery = searchQuery;
-  }
-
-  handleSearch(searchQuery: string): void {
-    if (!searchQuery) return this.getMovies();
+  handleSearch(): void {
+    if (!this.searchQuery) return this.movieService.fetchMovies();
     this.movieService.setCurrentPage(1);
-    this.movieService.searchMovies({ query: searchQuery });
-    this.prevSearchQuery = searchQuery; // FIXME: into service
+    this.movieService.searchMovies();
+    this.setPreviousSearchQuery(this.searchQuery);
   }
+
+  setPreviousSearchQuery = (searchQuery: string): void => {
+    this.prevSearchQuery = searchQuery;
+  };
+
   handleSearchKeyPress(event: KeyboardEvent) {
     event.preventDefault();
     if (this.prevSearchQuery === this.searchQuery) return;
-    if (event.key === 'Enter') this.handleSearch(this.searchQuery);
+    if (event.key === 'Enter') this.handleSearch();
   }
+
+  handleSearchReset() {
+    this.movieService.setSearchQuery('');
+    this.movieService.setCurrentPage(1);
+    this.handleSearch();
+  }
+
   scrollToTop() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   onPageChange(page: number): void {
     this.movieService.setCurrentPage(page);
-    if (this.searchQuery) return this.movieService.searchMovies({ query: this.searchQuery, page });
-    this.getMovies();
+    this.movieService[this.searchQuery ? 'searchMovies' : 'fetchMovies']();
   }
 
-  ngOnDestroy(): void {}
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
 }

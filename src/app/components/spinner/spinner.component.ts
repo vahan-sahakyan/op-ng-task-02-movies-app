@@ -2,6 +2,7 @@ import { Component, Input } from '@angular/core';
 
 @Component({
   selector: 'app-spinner',
+  styleUrls: ['./spinner.component.scss'],
   template: `
     <div
       [style.opacity]="isActive ? '0.4' : '0'"
@@ -15,7 +16,6 @@ import { Component, Input } from '@angular/core';
       </div>
     </div>
   `,
-  styleUrls: ['./spinner.component.scss'],
 })
 export class SpinnerComponent {
   @Input() isActive = false;

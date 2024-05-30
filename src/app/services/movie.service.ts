@@ -12,7 +12,6 @@ import {
 } from '../models/movie/movie.model';
 
 const REACT_APP_MOVIES_API_KEY = 'f82ecbb7a5110caecaee2bee5e4c79d6';
-const FAKE_THROTTLING_FOR_SPINNER = 500;
 
 @Injectable({ providedIn: 'root' })
 export class MovieService {
@@ -28,6 +27,16 @@ export class MovieService {
   }
   public setCurrentPage(page: number): void {
     this.currentPageSubject.next(page);
+  }
+
+  // SEARCH QUERY
+  private searchQuerySubject = new BehaviorSubject<string>('');
+  public searchQuery$ = this.searchQuerySubject.asObservable();
+  public getSearchQuery(): string {
+    return this.searchQuerySubject.value;
+  }
+  public setSearchQuery(searchQuery: string): void {
+    this.searchQuerySubject.next(searchQuery);
   }
 
   // MOVIES
@@ -95,35 +104,31 @@ export class MovieService {
   fetchMovies(): void {
     const params = { ...this.commonParams, page: this.getCurrentPage() };
     this.setIsLoadingMovies(true);
-    this.http
-      .get<IMoviesResponse>(`${this.baseUrl}/movie/popular`, { params })
-      .pipe(delay(FAKE_THROTTLING_FOR_SPINNER))
-      .subscribe({
-        next: (data) => this.setMovies(data),
-        complete: () => this.setIsLoadingMovies(false),
-      });
+    this.http.get<IMoviesResponse>(`${this.baseUrl}/movie/popular`, { params }).subscribe({
+      next: (data) => this.setMovies(data),
+      complete: () => this.setIsLoadingMovies(false),
+    });
   }
-  searchMovies(_params: Record<any, any>): void {
-    const params = { ...this.commonParams, ..._params, page: this.getCurrentPage() };
+  searchMovies(_params = {}): void {
+    const params = {
+      ...this.commonParams,
+      page: this.getCurrentPage(),
+      query: this.getSearchQuery(),
+      ..._params,
+    };
     this.setIsLoadingMovies(true);
-    this.http
-      .get<IMoviesResponse>(`${this.baseUrl}/search/movie`, { params })
-      .pipe(delay(FAKE_THROTTLING_FOR_SPINNER))
-      .subscribe({
-        next: (data) => this.setMovies(data),
-        complete: () => this.setIsLoadingMovies(false),
-      });
+    this.http.get<IMoviesResponse>(`${this.baseUrl}/search/movie`, { params }).subscribe({
+      next: (data) => this.setMovies(data),
+      complete: () => this.setIsLoadingMovies(false),
+    });
   }
   fetchMovieById(id: string): void {
     const params = { ...this.commonParams };
     this.setIsLoadingDetailedMovie(true);
-    this.http
-      .get<IDetailedMovie>(`${this.baseUrl}/movie/${id}`, { params })
-      .pipe(delay(FAKE_THROTTLING_FOR_SPINNER))
-      .subscribe({
-        next: (data) => this.setDetailedMovie(data),
-        complete: () => this.setIsLoadingDetailedMovie(false),
-      });
+    this.http.get<IDetailedMovie>(`${this.baseUrl}/movie/${id}`, { params }).subscribe({
+      next: (data) => this.setDetailedMovie(data),
+      complete: () => this.setIsLoadingDetailedMovie(false),
+    });
   }
 
   fetchGenres(): void {

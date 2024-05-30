@@ -2,6 +2,7 @@ import { Component, EventEmitter, Output } from '@angular/core';
 
 @Component({
   selector: 'app-scroll-up',
+  styleUrls: ['./scroll-up.component.scss'],
   template: `
     <button
       class="scroll-to-top z-50 fixed bottom-8 right-8 p-3 text-blue-500 dark:text-zinc-400 hover:text-blue-500 rounded-full border border-zinc-300 dark:border-zinc-700 hover:border-blue-500 bg-white dark:bg-zinc-800"
@@ -24,7 +25,6 @@ import { Component, EventEmitter, Output } from '@angular/core';
       </svg>
     </button>
   `,
-  styleUrls: ['./scroll-up.component.scss'],
 })
 export class ScrollUpComponent {
   @Output() scrollUp = new EventEmitter<void>();

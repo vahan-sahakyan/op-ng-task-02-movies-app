@@ -52,7 +52,6 @@ export class PaginationComponent {
   }
 
   changePage(page: any): void {
-    console.log(this.currentPage, page);
     if (page === 'SUPER_PREV') {
       const newPage = Math.max(this.currentPage - 5, 1);
       this.pageChange.emit(newPage);

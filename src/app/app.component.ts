@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MovieService } from './services/movie.service';
-import { combineLatest } from 'rxjs';
+import { Subject, combineLatest, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -13,7 +13,8 @@ import { combineLatest } from 'rxjs';
     </div>
   `,
 })
-export class AppComponent implements OnInit {
+export class AppComponent implements OnInit, OnDestroy {
+  private destroy$ = new Subject<void>();
   isLoadingMoviesService = false;
   constructor(private movieService: MovieService) {}
   ngOnInit(): void {
@@ -21,8 +22,14 @@ export class AppComponent implements OnInit {
       this.movieService.isLoadingMovies$,
       this.movieService.isLoadingGenres$,
       this.movieService.isLoadingDetailedMovie$,
-    ]).subscribe(([isLoadingMovies, isLoadingGenres, isLoadingDetailedMovie]) => {
-      this.isLoadingMoviesService = isLoadingMovies || isLoadingGenres || isLoadingDetailedMovie;
-    });
+    ])
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(([isLoadingMovies, isLoadingGenres, isLoadingDetailedMovie]) => {
+        this.isLoadingMoviesService = isLoadingMovies || isLoadingGenres || isLoadingDetailedMovie;
+      });
+  }
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }
