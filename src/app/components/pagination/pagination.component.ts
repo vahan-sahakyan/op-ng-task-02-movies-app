@@ -13,17 +13,17 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
           'pagination-button hidden lg:block xl:block ' +
             ' rounded-full text-zinc-500 mx-1 hover:text-zinc-900 ' +
             'dark:text-zinc-400 dark:border-zinc-700 dark:hover:text-zinc-100  ' +
-            'justify-self-start absolute left-0 border-none disabled:cursor-not-allowed'
+            ' justify-self-start absolute left-0 border-none disabled:cursor-not-allowed '
         }}"
       >
         Back
       </button>
       <app-pagination-button
         *ngFor="let page of visiblePages"
-        [visiblePages]="visiblePages"
-        [currentPage]="currentPage"
-        (pageChange)="changePage($event)"
         [page]="page"
+        [currentPage]="currentPage"
+        [visiblePages]="visiblePages"
+        (pageChange)="changePage($event)"
         [isSuperButton]="['SUPER_PREV', 'SUPER_NEXT'].includes(page.toString())"
       />
       <button
@@ -33,8 +33,8 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
         class="{{
           'pagination-button hidden lg:block xl:block ' +
             ' rounded-full text-zinc-500 mx-1 hover:text-zinc-900 ' +
-            'dark:text-zinc-400 dark:border-zinc-700 dark:hover:text-zinc-100  ' +
-            'justify-self-end absolute right-0 border-none'
+            'dark:text-zinc-400 dark:border-zinc-700 dark:hover:text-zinc-100 ' +
+            ' justify-self-end absolute right-0 border-none'
         }}"
       >
         Next

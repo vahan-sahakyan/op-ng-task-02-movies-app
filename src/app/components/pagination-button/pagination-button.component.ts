@@ -11,12 +11,10 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
       class="{{
         'pagination-button rounded-full text-zinc-900 mx-1  hover:text-zinc-500 sm:-scale-50' +
           'dark:text-zinc-400 dark:border-zinc-700 dark:hover:text-zinc-100  ' +
-          (![+page - 2, +page - 1, page, +page + 1, +page + 2].includes(currentPage)
-            ? 'hidden sm:hidden md:block lg:block xl:block'
-            : '')
+          (!isMobileViewPages ? 'hidden sm:hidden md:block lg:block xl:block' : '')
       }}"
     >
-      {{ isSuperButton ? '. . . ' : page }}
+      {{ isSuperButton ? '. . .' : page }}
     </button>
   `,
 })
@@ -26,6 +24,10 @@ export class PaginationButtonComponent {
   @Input() isSuperButton!: boolean;
   @Input() currentPage: number = 1;
   @Output() pageChange = new EventEmitter<number | string>();
+
+  get isMobileViewPages(): boolean {
+    return [+this.page - 2, +this.page - 1, this.page, +this.page + 1, +this.page + 2].includes(this.currentPage);
+  }
 
   onChangePage(page: number | string) {
     this.pageChange.emit(page);

@@ -39,7 +39,7 @@ import { MovieService } from 'src/app/services/movie.service';
       <div
         class="{{
           ' absolute top-4.5 right-3 flex items-center pointer-events-none border-2 py-3 px-2 rounded-md ' +
-            'text-zinc-400  border-zinc-300  dark:text-zinc-500  dark:border-zinc-600'
+            ' text-zinc-400  border-zinc-300  dark:text-zinc-500  dark:border-zinc-600 '
         }}"
       >
         <i class="fa-sharp fa-solid fa-xs fa-slash-forward"></i>

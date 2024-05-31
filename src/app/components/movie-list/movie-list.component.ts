@@ -15,30 +15,26 @@ import { MovieService } from 'src/app/services/movie.service';
         [setPreviousSearchQuery]="setPreviousSearchQuery"
       />
 
-      <div *ngIf="totalPages > 1" class="pagination-wrapper">
-        <br />
-        <br />
-        <hr class="dark:border-zinc-700" />
-        <app-pagination
-          *ngIf="totalPages > 1"
-          [totalPages]="totalPages"
-          [currentPage]="currentPage"
-          (pageChange)="onPageChange($event)"
-        ></app-pagination>
-      </div>
-
       <app-no-results [text]="prevSearchQuery" *ngIf="!movies.length && !isLoadingMovies" />
 
       <div class="results-container" *ngIf="movies.length">
+        <div *ngIf="totalPages > 1" class="pagination-wrapper mt-16">
+          <hr class="dark:border-zinc-700" />
+          <app-pagination
+            *ngIf="totalPages > 1"
+            [totalPages]="totalPages"
+            [currentPage]="currentPage"
+            (pageChange)="onPageChange($event)"
+          ></app-pagination>
+        </div>
+
         <div
           class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 gap-y-44 mt-10 mb-44"
         >
           <app-movie-item *ngFor="let movie of movies" [movie]="movie" [genres]="genres" />
         </div>
 
-        <div *ngIf="totalPages > 1" class="pagination-wrapper">
-          <br />
-          <br />
+        <div *ngIf="totalPages > 1" class="pagination-wrapper mt-16">
           <hr class="dark:border-zinc-700" />
           <app-pagination
             *ngIf="totalPages > 1"

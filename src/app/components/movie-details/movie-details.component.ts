@@ -33,8 +33,7 @@ import { MovieService } from 'src/app/services/movie.service';
               <p class="text-gray-600 italic mb-4 dark:text-zinc-400">{{ detailedMovie.tagline }}</p>
               <p class="text-lg leading-relaxed mb-4 text-gray-800 dark:text-zinc-200">{{ detailedMovie.overview }}</p>
             </header>
-            <hr class="border-gray-300 dark:border-zinc-600" />
-            <br />
+            <hr class="border-gray-300 dark:border-zinc-600 mb-8" />
 
             <ul class="space-y-2">
               <li><span class="font-semibold">Release Date:</span> {{ detailedMovie.release_date | date }}</li>

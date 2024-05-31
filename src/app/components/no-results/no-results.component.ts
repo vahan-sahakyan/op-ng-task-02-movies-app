@@ -5,10 +5,8 @@ import { Component, Input } from '@angular/core';
   styleUrls: ['./no-results.component.scss'],
   template: `
     <div class="py-40 text-center">
-      <h3 class="no-results__header font-bold">No Results</h3>
-      <p class="no-results__text typ-subhead">
-        There were no results for “{{ text }}” on <br />Movies Application. Try a new search.
-      </p>
+      <h3 class="font-bold">No Results</h3>
+      <p>There were no results for “{{ text }}” on <br />Movies Application. Try a new search.</p>
     </div>
   `,
 })
