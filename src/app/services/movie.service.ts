@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, delay } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import {
   IDetailedMovie,
   IGenre,
@@ -11,13 +11,17 @@ import {
   NULL_MVS_RESP,
 } from '../models/movie/movie.model';
 
-const REACT_APP_MOVIES_API_KEY = 'f82ecbb7a5110caecaee2bee5e4c79d6';
+// put types to all variables and the type of methods return.
+// put docs to all the methods.
+// if there is no custom logic for the getters and setters (exposing the subjects) then you can just remove them and deal the subjects directly.
 
+const REACT_APP_MOVIES_API_KEY = 'f82ecbb7a5110caecaee2bee5e4c79d6';
 @Injectable({ providedIn: 'root' })
 export class MovieService {
   private apiKey = REACT_APP_MOVIES_API_KEY;
   private baseUrl = `https://api.themoviedb.org/3`;
   private commonParams = { api_key: this.apiKey };
+  isLoadingMoviesService: boolean = false;
 
   // CURRENT PAGE
   private currentPageSubject = new BehaviorSubject<number>(1);
@@ -69,44 +73,14 @@ export class MovieService {
     this.detailedMovieSubject.next(detailedMovie);
   }
 
-  // IS LOADING MOVIES
-  private isLoadingMoviesSubject = new BehaviorSubject<boolean>(false);
-  public isLoadingMovies$ = this.isLoadingMoviesSubject.asObservable();
-  public getLoadingMovies(): boolean {
-    return this.isLoadingMoviesSubject.value;
-  }
-  public setIsLoadingMovies(loading: boolean): void {
-    this.isLoadingMoviesSubject.next(loading);
-  }
-
-  // IS LOADING GENRES
-  private isLoadingGenresSubject = new BehaviorSubject<boolean>(false);
-  public isLoadingGenres$ = this.isLoadingGenresSubject.asObservable();
-  public getLoadingGenres(): boolean {
-    return this.isLoadingGenresSubject.value;
-  }
-  public setIsLoadingGenres(loading: boolean): void {
-    this.isLoadingGenresSubject.next(loading);
-  }
-
-  // IS LOADING DETAILED MOVIE
-  private isLoadingDetailedMovieSubject = new BehaviorSubject<boolean>(false);
-  public isLoadingDetailedMovie$ = this.isLoadingDetailedMovieSubject.asObservable();
-  public getLoadingDetailedMovie(): boolean {
-    return this.isLoadingDetailedMovieSubject.value;
-  }
-  public setIsLoadingDetailedMovie(loading: boolean): void {
-    this.isLoadingDetailedMovieSubject.next(loading);
-  }
-
   constructor(private http: HttpClient) {}
 
   fetchMovies(): void {
     const params = { ...this.commonParams, page: this.getCurrentPage() };
-    this.setIsLoadingMovies(true);
+    this.isLoadingMoviesService = true;
     this.http.get<IMoviesResponse>(`${this.baseUrl}/movie/popular`, { params }).subscribe({
       next: (data) => this.setMovies(data),
-      complete: () => this.setIsLoadingMovies(false),
+      complete: () => this.isLoadingMoviesService = false,
     });
   }
   searchMovies(_params = {}): void {
@@ -116,27 +90,27 @@ export class MovieService {
       query: this.getSearchQuery(),
       ..._params,
     };
-    this.setIsLoadingMovies(true);
+    this.isLoadingMoviesService = true;
     this.http.get<IMoviesResponse>(`${this.baseUrl}/search/movie`, { params }).subscribe({
       next: (data) => this.setMovies(data),
-      complete: () => this.setIsLoadingMovies(false),
+      complete: () => this.isLoadingMoviesService = false,
     });
   }
   fetchMovieById(id: string): void {
     const params = { ...this.commonParams };
-    this.setIsLoadingDetailedMovie(true);
+    this.isLoadingMoviesService = true;
     this.http.get<IDetailedMovie>(`${this.baseUrl}/movie/${id}`, { params }).subscribe({
       next: (data) => this.setDetailedMovie(data),
-      complete: () => this.setIsLoadingDetailedMovie(false),
+      complete: () => this.isLoadingMoviesService = false,
     });
   }
 
   fetchGenres(): void {
     const params = { ...this.commonParams };
-    this.setIsLoadingGenres(true);
+    this.isLoadingMoviesService = true;
     this.http.get<{ genres: IGenre[] }>(`${this.baseUrl}/genre/movie/list`, { params }).subscribe({
       next: (res) => this.setGenres(res),
-      complete: () => this.setIsLoadingGenres(false),
+      complete: () => this.isLoadingMoviesService = false,
     });
   }
 }

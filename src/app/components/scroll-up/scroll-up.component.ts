@@ -4,6 +4,7 @@ import { Component, EventEmitter, Output } from '@angular/core';
   selector: 'app-scroll-up',
   styleUrls: ['./scroll-up.component.scss'],
   template: `
+  <!-- use ngClass -->
     <button
       (click)="scrollToTop()"
       class="{{

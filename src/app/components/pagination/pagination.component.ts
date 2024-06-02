@@ -5,6 +5,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
   styleUrls: ['./pagination.component.scss'],
   template: `
     <div class="relative flex justify-center mt-4 select-none">
+      <!-- use ngClass -->
       <button
         (click)="changePage(currentPage - 1)"
         [disabled]="currentPage === 1"

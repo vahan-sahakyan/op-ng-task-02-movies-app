@@ -1,7 +1,7 @@
-import { HttpClient } from '@angular/common/http';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component} from '@angular/core';
 import { MovieService } from './services/movie.service';
-import { Subject, combineLatest, takeUntil } from 'rxjs';
+
+// create html file for each component.
 
 @Component({
   selector: 'app-root',
@@ -9,27 +9,14 @@ import { Subject, combineLatest, takeUntil } from 'rxjs';
   template: `
     <div class="min-h-screen py-20 px-10 dark:bg-zinc-800 dark:text-zinc-200">
       <router-outlet></router-outlet>
-      <app-spinner [isActive]="isLoadingMoviesService" />
+      <app-spinner [isActive]="movieService.isLoadingMoviesService" />
     </div>
   `,
 })
-export class AppComponent implements OnInit, OnDestroy {
-  private destroy$ = new Subject<void>();
-  isLoadingMoviesService = false;
-  constructor(private movieService: MovieService) {}
-  ngOnInit(): void {
-    combineLatest([
-      this.movieService.isLoadingMovies$,
-      this.movieService.isLoadingGenres$,
-      this.movieService.isLoadingDetailedMovie$,
-    ])
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(([isLoadingMovies, isLoadingGenres, isLoadingDetailedMovie]) => {
-        this.isLoadingMoviesService = isLoadingMovies || isLoadingGenres || isLoadingDetailedMovie;
-      });
-  }
-  ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
-  }
+// I don't think you need any logic for getting data here. this is only the entry point for the Application
+// the real one is the movie-list component which will load on the main route.
+export class AppComponent {
+  constructor(
+    public movieService: MovieService,
+  ) {}
 }

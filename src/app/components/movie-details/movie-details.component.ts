@@ -77,14 +77,11 @@ export class MovieDetailsComponent implements OnInit, OnDestroy {
     });
     this.movieService.fetchMovieById(this.movieId);
     combineLatest([
-      //
       this.movieService.detailedMovie$,
-      this.movieService.isLoadingDetailedMovie$,
     ])
       .pipe(takeUntil(this.destroy$))
-      .subscribe(([detailedMovieRes, isLoadingDetailedMovie]) => {
+      .subscribe(([detailedMovieRes]) => {
         this.detailedMovie = detailedMovieRes;
-        this.isLoadingDetailedMovie = isLoadingDetailedMovie;
       });
   }
   goBack() {
