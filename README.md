@@ -1,9 +1,9 @@
 # 02 - Movies Application
 
 >
-> **Styling:** $~~$ [tailwindcss](./package.json#L38)
+> **Styling:**  [tailwindcss](./package.json#L38)
 >
-> **Icons:** $~~$ [font-awesome](./src/styles.scss#L1)
+> **Icons:**  [font-awesome](./src/styles.scss#L1)
 >
 > **Dark/Light** modes based on device settings
 >
