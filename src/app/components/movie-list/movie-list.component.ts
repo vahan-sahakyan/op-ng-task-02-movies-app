@@ -47,13 +47,6 @@ export class MovieListComponent implements OnInit, OnDestroy {
     this.movieService.previousSearchQuery = searchQuery;
   };
 
-  // onPageChange(page: number): void {
-  //   this.movieService.currentPageSubject.next(page);
-  //   // I don't recommend this way of accessing method based on a condition.
-  //   if (this.movieService.searchQuerySubject.value) this.movieService.searchMovies();
-  //   else this.movieService.fetchMovies();
-  // }
-
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
