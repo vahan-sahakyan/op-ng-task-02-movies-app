@@ -1,21 +1,22 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { MovieService } from '../../services/movie.service';
 
 @Component({
   selector: 'app-pagination',
   styleUrls: ['./pagination.component.scss'],
   template: `
-    <div class="relative flex justify-center mt-4 select-none">
+    <div [ngClass]="'relative flex justify-center mt-4 select-none'">
       <!-- use ngClass -->
       <button
         (click)="changePage(currentPage - 1)"
         [disabled]="currentPage === 1"
-        [class.pointer-events-none]="currentPage === 1"
-        class="{{
-          'pagination-button hidden lg:block xl:block ' +
-            ' rounded-full text-zinc-500 mx-1 hover:text-zinc-900 ' +
-            'dark:text-zinc-400 dark:border-zinc-700 dark:hover:text-zinc-100  ' +
-            ' justify-self-start absolute left-0 border-none disabled:cursor-not-allowed '
-        }}"
+        [ngClass]="{
+          'pointer-events-none': currentPage === 1,
+          'pagination-button hidden lg:block xl:block ': true,
+          ' rounded-full text-zinc-500 mx-1 hover:text-zinc-900 ': true,
+          'dark:text-zinc-400 dark:border-zinc-700 dark:hover:text-zinc-100  ': true,
+          ' justify-self-start absolute left-0 border-none disabled:cursor-not-allowed ': true,
+        }"
       >
         Back
       </button>
@@ -30,13 +31,13 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
       <button
         (click)="changePage(currentPage + 1)"
         [disabled]="currentPage === totalPages"
-        [class.pointer-events-none]="currentPage === totalPages"
-        class="{{
-          'pagination-button hidden lg:block xl:block ' +
-            ' rounded-full text-zinc-500 mx-1 hover:text-zinc-900 ' +
-            'dark:text-zinc-400 dark:border-zinc-700 dark:hover:text-zinc-100 ' +
-            ' justify-self-end absolute right-0 border-none'
-        }}"
+        [ngClass]="{
+          'pointer-events-none': currentPage === totalPages,
+          'pagination-button hidden lg:block xl:block ': true,
+          ' rounded-full text-zinc-500 mx-1 hover:text-zinc-900 ': true,
+          'dark:text-zinc-400 dark:border-zinc-700 dark:hover:text-zinc-100 ': true,
+          ' justify-self-end absolute right-0 border-none': true,
+        }"
       >
         Next
       </button>
@@ -46,27 +47,24 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 export class PaginationComponent {
   @Input() currentPage: number = 0;
   @Input() totalPages: number = 0;
-  @Output() pageChange = new EventEmitter<number>();
+
+  constructor(public movieService: MovieService) {}
 
   get visiblePages(): Array<string | number> {
     return getVisiblePages(this);
   }
 
   changePage(page: any): void {
-    if (page === 'SUPER_PREV') {
-      const newPage = Math.max(this.currentPage - 5, 1);
-      this.pageChange.emit(newPage);
-    } else if (page === 'SUPER_NEXT') {
-      const newPage = Math.min(this.currentPage + 5, this.totalPages);
-      this.pageChange.emit(newPage);
-    } else if (page >= 1 && page <= this.totalPages) {
-      this.pageChange.emit(page);
-    }
+    const newPageMap: Record<string, number> = {
+      SUPER_PREV: Math.max(this.currentPage - 5, 1),
+      SUPER_NEXT: Math.min(this.currentPage + 5, this.totalPages),
+    };
+    this.movieService.handlePageChange(newPageMap[page] ?? page);
   }
 }
 
 function getVisiblePages(self: PaginationComponent) {
-  const totalVisiblePages = 5;
+  const totalVisiblePages: number = 5;
   const pages: Array<number | string> = [];
 
   if (self.totalPages <= totalVisiblePages) {

@@ -12,21 +12,19 @@ import { MovieService } from 'src/app/services/movie.service';
   templateUrl: './movie-list.component.html',
 })
 export class MovieListComponent implements OnInit, OnDestroy {
-  private destroy$ = new Subject<void>();
+  private destroy$: Subject<void> = new Subject<void>();
   movies: IMovie[] = [];
   genres: IGenreMap = {};
   currentPage: number = 1;
   totalPages: number = 500;
-  searchQuery: string = '';
-  prevSearchQuery: string = '';
   isLoadingMovies: boolean = false;
 
-  constructor(private movieService: MovieService) {}
+  constructor(public movieService: MovieService) {}
 
   ngOnInit(): void {
     // I don't recommend this way of accessing method based on a condition.
-    this.movieService[this.searchQuery ? 'searchMovies' : 'fetchMovies']();
-    this.movieService[this.movieService.getSearchQuery() ? 'searchMovies' : 'fetchMovies']();
+    if (this.movieService.searchQuerySubject.value) this.movieService.searchMovies();
+    else this.movieService.fetchMovies();
 
     this.movieService.fetchGenres();
 
@@ -42,45 +40,19 @@ export class MovieListComponent implements OnInit, OnDestroy {
         this.totalPages = moviesRes.total_pages < 500 ? moviesRes.total_pages : 500;
         this.genres = genresRes.genres.reduce((acc, cur) => ({ ...acc, [cur.id]: cur.name }), {});
         this.currentPage = currentPage;
-        this.searchQuery = searchQuery;
       });
   }
 
-  handleSearch(): void {
-    if (!this.searchQuery) return this.movieService.fetchMovies();
-    this.movieService.setCurrentPage(1);
-    this.movieService.searchMovies();
-    this.setPreviousSearchQuery(this.searchQuery);
-  }
-
   setPreviousSearchQuery = (searchQuery: string): void => {
-    this.prevSearchQuery = searchQuery;
+    this.movieService.previousSearchQuery = searchQuery;
   };
 
-  handleSearchKeyPress(event: KeyboardEvent) {
-    event.preventDefault();
-    if (this.prevSearchQuery === this.searchQuery) return;
-    if (event.key === 'Enter') this.handleSearch();
-  }
-
-  handleSearchReset() {
-    this.movieService.setSearchQuery('');
-    this.movieService.setCurrentPage(1);
-    this.handleSearch();
-  }
-
-  // I guess you should move this method to its component (scroll-up.component.ts).
-  scrollToTop() {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
-
-  onPageChange(page: number): void {
-    this.movieService.setCurrentPage(page);
-
-    // I don't recommend this way of accessing method based on a condition.
-    this.movieService[this.searchQuery ? 'searchMovies' : 'fetchMovies']();
-    // this.searchQuery ? this.movieService.searchMovies() : this.movieService.fetchMovies();
-  }
+  // onPageChange(page: number): void {
+  //   this.movieService.currentPageSubject.next(page);
+  //   // I don't recommend this way of accessing method based on a condition.
+  //   if (this.movieService.searchQuerySubject.value) this.movieService.searchMovies();
+  //   else this.movieService.fetchMovies();
+  // }
 
   ngOnDestroy(): void {
     this.destroy$.next();
