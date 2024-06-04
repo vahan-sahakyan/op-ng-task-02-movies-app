@@ -4,45 +4,7 @@ import { MovieService } from '../../services/movie.service';
 @Component({
   selector: 'app-pagination',
   styleUrls: ['./pagination.component.scss'],
-  template: `
-    <div [ngClass]="'relative flex justify-center mt-4 select-none'">
-      <!-- use ngClass -->
-      <button
-        (click)="changePage(currentPage - 1)"
-        [disabled]="currentPage === 1"
-        [ngClass]="{
-          'pointer-events-none': currentPage === 1,
-          'pagination-button hidden lg:block xl:block ': true,
-          ' rounded-full text-zinc-500 mx-1 hover:text-zinc-900 ': true,
-          'dark:text-zinc-400 dark:border-zinc-700 dark:hover:text-zinc-100  ': true,
-          ' justify-self-start absolute left-0 border-none disabled:cursor-not-allowed ': true,
-        }"
-      >
-        Back
-      </button>
-      <app-pagination-button
-        *ngFor="let page of visiblePages"
-        [page]="page"
-        [currentPage]="currentPage"
-        [visiblePages]="visiblePages"
-        (pageChange)="changePage($event)"
-        [isSuperButton]="['SUPER_PREV', 'SUPER_NEXT'].includes(page.toString())"
-      />
-      <button
-        (click)="changePage(currentPage + 1)"
-        [disabled]="currentPage === totalPages"
-        [ngClass]="{
-          'pointer-events-none': currentPage === totalPages,
-          'pagination-button hidden lg:block xl:block ': true,
-          ' rounded-full text-zinc-500 mx-1 hover:text-zinc-900 ': true,
-          'dark:text-zinc-400 dark:border-zinc-700 dark:hover:text-zinc-100 ': true,
-          ' justify-self-end absolute right-0 border-none': true,
-        }"
-      >
-        Next
-      </button>
-    </div>
-  `,
+  templateUrl: './pagination.component.html',
 })
 export class PaginationComponent {
   @Input() currentPage: number = 0;

@@ -1,0 +1,12 @@
+<button
+  (click)="onChangePage(page)"
+  [class.active]="page === currentPage"
+  [class.font-bold]="page === currentPage"
+  [ngClass]="{
+  'hidden sm:hidden md:block lg:block xl:block': !isMobileViewPages,
+  'pagination-button rounded-full text-zinc-900 mx-1  hover:text-zinc-500': true,
+  'dark:text-zinc-400 dark:border-zinc-700 dark:hover:text-zinc-100  ': true,
+}"
+>
+  {{ isSuperButton ? ". . ." : page }}
+</button>
