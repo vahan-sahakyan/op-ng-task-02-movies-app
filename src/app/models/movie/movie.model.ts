@@ -1,7 +1,4 @@
-////////////////////////////////
 // Movie
-////////////////////////////////
-
 export interface IMovie {
   adult: boolean;
   backdrop_path: string;
@@ -33,10 +30,7 @@ export const NULL_MVS_RESP = {
   total_results: 0,
 } satisfies IMoviesResponse;
 
-////////////////////////////////
 // Genres
-////////////////////////////////
-
 export interface IGenre {
   id: number;
   name: string;
@@ -54,10 +48,7 @@ export const NULL_GENRES_RESP = {
   genres: [],
 } satisfies IGenresResponse;
 
-////////////////////////////////
 // Detailed Movie
-////////////////////////////////
-
 export interface IDetailedMovie {
   adult: boolean;
   backdrop_path: string;
