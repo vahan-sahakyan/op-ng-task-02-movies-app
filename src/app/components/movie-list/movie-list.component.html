@@ -1,0 +1,26 @@
+<div [ngClass]="'container mx-auto p-4'">
+  <app-search-section (searchKeyPress)="movieService.handleSearchKeyPress($event)" />
+
+  <app-no-results *ngIf="!movies.length && !isLoadingMovies" [text]="movieService.previousSearchQuery" />
+
+  <div [ngClass]="'results-container'" *ngIf="movies.length">
+    <div [ngClass]="'pagination-wrapper mt-16'" *ngIf="totalPages > 1">
+      <hr [ngClass]="'dark:border-zinc-700'" />
+      <app-pagination *ngIf="totalPages > 1" [totalPages]="totalPages" [currentPage]="currentPage"></app-pagination>
+    </div>
+
+    <div
+      [ngClass]="
+        'grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 gap-y-44 mt-10 mb-44'
+      "
+    >
+      <app-movie-item *ngFor="let movie of movies" [movie]="movie" [genres]="genres" />
+    </div>
+
+    <div [ngClass]="'pagination-wrapper mt-16'" *ngIf="totalPages > 1">
+      <hr [ngClass]="'dark:border-zinc-700'" />
+      <app-pagination *ngIf="totalPages > 1" [totalPages]="totalPages" [currentPage]="currentPage"></app-pagination>
+    </div>
+  </div>
+  <app-scroll-up />
+</div>
