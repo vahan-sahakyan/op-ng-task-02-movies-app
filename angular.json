@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "02-movies": {
+    "op-ng-task-02-movies-app": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -17,7 +17,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "dist/02-movies",
+            "outputPath": "dist/op-ng-task-02-movies-app",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": ["zone.js"],
@@ -58,10 +58,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "02-movies:build:production"
+              "browserTarget": "op-ng-task-02-movies-app:build:production"
             },
             "development": {
-              "browserTarget": "02-movies:build:development"
+              "browserTarget": "op-ng-task-02-movies-app:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -69,7 +69,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "02-movies:build"
+            "browserTarget": "op-ng-task-02-movies-app:build"
           }
         },
         "test": {
@@ -82,6 +82,9 @@
             "styles": ["src/styles.scss"],
             "scripts": []
           }
+        },
+        "deploy": {
+          "builder": "angular-cli-ghpages:deploy"
         }
       }
     }
